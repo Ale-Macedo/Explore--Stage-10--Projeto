@@ -5,7 +5,7 @@ const AppError = require("../utils/AppError")
 class NotesController {
   async create(request, response){
     const {title, description, rating, tags} = request.body;
-    const {user_id} = request.params;
+    const user_id = request.user.id;
 
     if(Number(rating) > 5 || Number(rating) < 0){
       throw new AppError("please add rating from 0 to 5")
@@ -22,21 +22,23 @@ class NotesController {
       throw new AppError("please add rating from 0 to 5")
     }
 
-    let Descriptions = [
-      "comedia",
-      "romance",
-      "terror",
-      "ação",
-      "ficção",
-      "jogos"
+    
 
-    ]
+    // let tagType = [
+    //   "comedia",
+    //   "romance",
+    //   "terror",
+    //   "ação",
+    //   "ficção",
+    //   "jogos"
 
-    Descriptions.map(f => {
-      if(Descriptions != tags){
-        throw new AppError(`please add a description ${Descriptions}`)
-      }
-    }) 
+    // ]
+
+    // const tagveryficator = tagType.map(f => {
+    //   if(tags  != tagType){
+    //     throw new AppError(`please add a description ${Descriptions}`)
+    //   }
+    // }) 
 
     const tagsInsert = tags.map(name => {
       return {
@@ -51,7 +53,7 @@ class NotesController {
 
     await knex("tags").insert(tagsInsert)
 
-    response.json();
+    return response.json();
   }
 
   async show(request, response){
@@ -81,8 +83,8 @@ class NotesController {
   }
 
   async index(request, response){
-    const { title, user_id, tags } = request.query;
-
+    const { title, tags } = request.query;
+    const  user_id = request.user.id
     let notes;
 
     if(tags){
